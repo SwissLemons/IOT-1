@@ -1,0 +1,69 @@
+// C++ code
+//
+
+int ledVermelho = 13;
+int ledAmarelo = 12;
+int ledVerde = 11;
+int ledPare = 10;
+int ledPasse = 9;
+int pinoBotao = 8;
+int estadoBotao = 0;
+int apertou = 0;
+int contador = 0;
+
+void setup(){
+	pinMode(ledVermelho, OUTPUT);
+  pinMode(ledAmarelo, OUTPUT);
+  pinMode(ledVerde, OUTPUT);
+  pinMode(ledPasse, OUTPUT);
+  pinMode(ledPare, OUTPUT);
+  pinMode(pinoBotao, INPUT);
+  Serial.begin(9600);
+}
+
+void funcao(){
+	//Lê o estado do botão
+	estadoBotao = digitalRead(pinoBotao);
+	if (estadoBotao == HIGH) {
+		apertou = 1;
+	}
+}
+
+void loop(){
+	funcao();
+	for(contador = 0; contador < 30000; contador++){ 
+		digitalWrite(ledAmarelo, LOW);
+		digitalWrite(ledVermelho, HIGH);
+
+		// Se houver solicitação, muda para verde (passe)
+		if(apertou == 1){
+			digitalWrite(ledPare, LOW);
+			digitalWrite(ledPasse, HIGH);
+		}else{
+			digitalWrite(ledPasse, LOW);
+			digitalWrite(ledPare, HIGH);
+		}
+	}
+  
+  // Após a fase vermelho, reseta a solicitação
+	apertou = 0;
+  
+	funcao();
+	// Fase Verde:
+	for(contador = 0; contador < 30000; contador++){
+		funcao();
+		digitalWrite(ledVermelho, LOW);
+		digitalWrite(ledVerde, HIGH);
+		digitalWrite(ledPare, HIGH);
+		digitalWrite(ledPasse, LOW);
+	}
+  
+	funcao();
+	// Fase Amarelo:
+	for(contador = 0; contador < 30000; contador++){
+		funcao();
+			digitalWrite(ledVerde, LOW);
+      digitalWrite(ledAmarelo, HIGH);
+    }
+	delay(10);
+}
